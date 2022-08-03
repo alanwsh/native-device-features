@@ -64,3 +64,21 @@ export function fetchPlaces(){
 
     return promise;
 }
+
+export function fetchPlaceDetails(id){
+    const promise = new Promise((resolve, reject) => {
+        database.transaction((tx) => {
+            tx.executeSql('SELECT * from places WHERE id = ?',[id],
+            (_, result) => {
+                const data = result.rows._array[0];
+                const place = new Place(data.title, data.imageUri, {lat: data.lat, lng: data.lng, address: data.address}, data.id);
+                resolve(place);
+            },
+            (_, error) => {
+                reject(error);
+            }
+            )
+        });
+    });
+    return promise;
+}
